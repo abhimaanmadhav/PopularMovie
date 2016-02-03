@@ -7,7 +7,7 @@ import android.util.Log;
  */
 public class Logger
 {
-    static boolean isEnabled = true;
+    static boolean isEnabled = false;
 
     public static void error(Object cls, Object obj)
         {
