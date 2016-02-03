@@ -2,6 +2,7 @@ package movies.movieDetails;
 
 import android.app.Fragment;
 import android.content.Context;
+import android.content.res.Configuration;
 import android.databinding.DataBindingUtil;
 import android.net.Uri;
 import android.os.Bundle;
@@ -10,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.abhimaan.Result;
+import com.squareup.picasso.Picasso;
 
 import movies.abhimaan.com.popularmovies1.R;
 import movies.abhimaan.com.popularmovies1.databinding.FragmentMovieDetailBinding;
@@ -25,17 +27,11 @@ import utility.Logger;
  */
 public class MovieDetailFragment extends Fragment
 {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     public static final String ARG_PARAM1 = "details";
-    private static final String ARG_PARAM2 = "param2";
     Result moveDetailsObj;
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
 
     private OnFragmentInteractionListener mListener;
-
+    FragmentMovieDetailBinding mBinding;
 
     /**
      * Use this factory method to create a new instance of
@@ -59,20 +55,30 @@ public class MovieDetailFragment extends Fragment
         {
             super.onCreate(savedInstanceState);
             moveDetailsObj = getArguments().getParcelable(ARG_PARAM1);
-            Logger.debug(this,moveDetailsObj);
+            Logger.debug(this, moveDetailsObj);
         }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState)
         {
-            FragmentMovieDetailBinding mBinding = DataBindingUtil.inflate(inflater, R.layout
+             mBinding = DataBindingUtil.inflate(inflater, R.layout
                     .fragment_movie_detail, container, false);
             mBinding.setMoveDetailsObj(moveDetailsObj);
+            Picasso.with(getActivity()).load(moveDetailsObj.getPosterPath()).fit().into(mBinding
+                    .poster);
+
             return mBinding.getRoot();
         }
 
-    // TODO: Rename method, update argument and hook method into UI event
+    public void setData(Result data)
+        {
+            moveDetailsObj = data;
+            mBinding.setMoveDetailsObj(moveDetailsObj);
+            Picasso.with(getActivity()).load(moveDetailsObj.getPosterPath()).fit().into(mBinding
+                    .poster);
+        }
+
     public void onButtonPressed(Uri uri)
         {
             if (mListener != null)
@@ -114,7 +120,12 @@ public class MovieDetailFragment extends Fragment
      */
     public interface OnFragmentInteractionListener
     {
-        // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig)
+        {
+            super.onConfigurationChanged(newConfig);
+        }
 }

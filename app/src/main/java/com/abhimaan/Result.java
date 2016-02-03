@@ -10,10 +10,14 @@ import com.google.gson.annotations.SerializedName;
 import java.util.ArrayList;
 import java.util.List;
 
+import movies.constants.Constants;
+
 public class Result implements Parcelable
 {
     public Result()
         {
+            posterPath = "";
+            releaseDate = "";
         }
 
     @SerializedName("poster_path")
@@ -57,7 +61,7 @@ public class Result implements Parcelable
     public Boolean video;
     @SerializedName("vote_average")
     @Expose
-    public Float voteAverage;
+    public Float voteAverage=0f;
 
     @Override
     public String toString()
@@ -82,7 +86,7 @@ public class Result implements Parcelable
 
     public String getPosterPath()
         {
-            return posterPath;
+            return Constants.PHOTOURL + posterPath;
         }
 
     public void setPosterPath(String posterPath)
@@ -113,6 +117,13 @@ public class Result implements Parcelable
     public String getReleaseDate()
         {
             return releaseDate;
+        }
+
+    public String getReleaseYear()
+        {
+            if (releaseDate.isEmpty())
+                return releaseDate;
+            return releaseDate.substring(0, 4);
         }
 
     public void setReleaseDate(String releaseDate)
@@ -217,7 +228,7 @@ public class Result implements Parcelable
 
     public String getVoteAverageString()
         {
-            return String.valueOf(voteAverage)+"/10";
+            return String.valueOf(voteAverage) + "/10";
         }
 
     public void setVoteAverageString(String voteAverageString)
@@ -229,6 +240,7 @@ public class Result implements Parcelable
         {
             this.voteAverage = voteAverage;
         }
+
 
     @Override
     public int describeContents()

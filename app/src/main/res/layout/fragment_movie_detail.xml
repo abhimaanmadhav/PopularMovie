@@ -10,83 +10,114 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:background="@color/colorAccent"
+        >
 
-        <!-- TODO: Update blank fragment layout -->
         <TextView
             android:id="@+id/details_movie_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/hello_blank_fragment"/>
+            android:background="@color/dark_green"
+            android:elevation="1dp"
+            android:minHeight="60dp"
+            android:padding="16dp"
+            android:text="@{moveDetailsObj.originalTitle}"
+            android:textSize="28sp"
+            android:textStyle="bold"/>
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@android:color/holo_green_dark"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
             android:orientation="horizontal"
+            android:paddingLeft="16dp"
             android:weightSum="10">
 
             <ImageView
+                android:id="@+id/poster"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:src="@mipmap/ic_launcher"
-android:layout_weight="4"
-     />
+                android:layout_height="match_parent"
+                android:layout_weight="4"
+                android:minHeight="200dp"
+                android:scaleType="centerInside"
+                android:src="@mipmap/ic_launcher"/>
+
 
             <LinearLayout
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_weight="6"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:padding="16dp">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:text="@{moveDetailsObj.releaseYear}"
+                    android:textColor="@color/grey"
+                    android:textSize="20sp"
+                    android:textStyle="bold"/>
 
-                    android:text="@{moveDetailsObj.releaseDate}"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-
-                    android:text="251 min"/>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@android:color/white"
                     android:minHeight="30dp"
-                    android:background="@android:color/holo_blue_bright"
                     android:text="@{moveDetailsObj.voteAverageString}"
+                    android:textColor="@android:color/black"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
                     />
 
                 <Button
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/fav_button"/>
+                    android:background="@drawable/button_background"
+                    android:padding="8dp"
+                    android:text="@string/fav_button"
+                    android:textColor="@color/grey"/>
 
             </LinearLayout>
+        </LinearLayout>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@{moveDetailsObj.overview}"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:fontFamily="@string/font_medium"
+            android:padding="16dp"
+            android:text="@{moveDetailsObj.overview}"
+            android:textColor="@color/grey"
+            android:textSize="14sp"/>
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@android:color/black"/>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@android:color/black"
+            android:padding="16dp"
+            android:visibility="gone"/>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Trailers:"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:text="@string/trailers"
+            android:visibility="gone"/>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone">
 
             <android.support.v7.widget.RecyclerView
                 android:layout_width="match_parent"
-                android:layout_height="400dp"
+                android:layout_height="wrap_content"
                 />
-        </LinearLayout>
+
+            <include layout="@layout/progressbar"></include>
+        </RelativeLayout>
+
 
     </LinearLayout>
 </layout>

@@ -1,13 +1,16 @@
 package movies.abhimaan.com.popularmovies1;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.Toast;
@@ -26,17 +29,24 @@ import retrofit2.Callback;
 import retrofit2.GsonConverterFactory;
 import retrofit2.Response;
 import retrofit2.Retrofit;
+import utility.Logger;
+import utility.Utils;
 
 /**
  * Created by Abhimaan on 01/02/16.
  */
 public class MovieGridFragment extends Fragment implements Callback<MovieResponse>, AdapterView
-        .OnItemClickListener
+        .OnItemClickListener, AbsListView.OnScrollListener
 {
     FetchMovies service;
     String TAG = "moviefragment";
-    GridView gridView;
+
+    MovieAdapter mMovieAdapter;
     Feedback mFeedback;
+    int page = 0;
+    boolean requesting = false;
+    String mCurrentConstrain = null;
+    int totalPages = -1;
 
     @Override
     public void onCreate(Bundle savedInstanceState)
@@ -49,16 +59,32 @@ public class MovieGridFragment extends Fragment implements Callback<MovieRespons
                     .baseUrl(Constants.BASEURL).addConverterFactory(GsonConverterFactory
                             .create(gson))
                     .build();
-
             service = retrofit.create(FetchMovies.class);
-            fetchMoviesWithConstrain("popularity.desc");
+            mMovieAdapter = new MovieAdapter(getActivity(), new ArrayList(0));
+            if (Utils.isConnected(getActivity()))
+                {
+                    fetchMoviesWithConstrain("popularity.desc", true);
+                } else
+                {
+                    Toast.makeText(getActivity(), getString(R.string.no_network_msg), Toast
+                            .LENGTH_LONG).show();
+                }
         }
 
     @Override
     public void onAttach(Context context)
         {
             super.onAttach(context);
+            Logger.error(this, "attach");
             mFeedback = ((Feedback) getActivity());
+        }
+
+    @Override
+    public void onAttach(Activity activity)
+        {
+            super.onAttach(activity);
+            Logger.error(this, "attach");
+            mFeedback = ((Feedback) activity);
         }
 
     @Override
@@ -66,6 +92,7 @@ public class MovieGridFragment extends Fragment implements Callback<MovieRespons
         {
             super.onDetach();
             mFeedback = null;
+            Logger.error(this, "detach");
 
         }
 
@@ -81,9 +108,11 @@ public class MovieGridFragment extends Fragment implements Callback<MovieRespons
             savedInstanceState)
         {
             View view = inflater.inflate(R.layout.fragment_movie, container, false);
+            GridView gridView;
             gridView = (GridView) view.findViewById(R.id.gridview);
-            gridView.setAdapter(new MovieAdapter(getActivity(), new ArrayList(0)));
+            gridView.setAdapter(mMovieAdapter);
             gridView.setOnItemClickListener(this);
+            gridView.setOnScrollListener(this);
 //            HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
 //            interceptor.setLevel(HttpLoggingInterceptor.Level.BASIC);
 //            OkHttpClient client = new OkHttpClient.Builder().addInterceptor(interceptor).build();
@@ -99,40 +128,104 @@ public class MovieGridFragment extends Fragment implements Callback<MovieRespons
                 {
                     Log.d(TAG, "sucess code" + response.body().toString());
                     MovieResponse data = response.body();
-                    ((MovieAdapter) gridView.getAdapter()).resetData(data.results);
+                    mMovieAdapter.addData(data.results);
+                    totalPages = data.totalPages;
+                    if (data.page == 1)
+                        {
+                            mFeedback.dataChange(data.results.get(0));
+                        }
                 } else
                 {
+                    page--;
                     Log.d(TAG, "error code" + response.code());
                     Toast.makeText(getActivity(), getString(R.string.sort_rating), Toast
                             .LENGTH_LONG).show();
                 }
+            requesting = false;
         }
 
     @Override
     public void onFailure(Throwable t)
         {
             Log.d(TAG, "error code" + t.toString());
+            page--;
+
             Toast.makeText(getActivity(), getString(R.string.sort_rating), Toast.LENGTH_LONG)
                     .show();
-//
+            requesting = false;
         }
 
-    void fetchMoviesWithConstrain(String constrain)
+    void fetchMoviesWithConstrain(String constrain, boolean reset)
         {
-            service.getMovies(Constants.APIKEY, constrain).enqueue(this);
+
+            if (requesting || (totalPages != -1 && page > totalPages))
+                {
+                    return;
+                }
+            if (reset)
+                {
+                    page = 0;
+                    totalPages = -1;
+                    mMovieAdapter.clear();
+
+                }
+            requesting = true;
+            service.getMovies(Constants.APIKEY, constrain, ++page).enqueue(this);
+            mCurrentConstrain = constrain;
         }
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id)
         {
-            Intent intent = new Intent(getActivity(), MovieDetailActivity.class);
-            intent.putExtra(MovieDetailFragment.ARG_PARAM1, (Result) parent.getItemAtPosition
-                    (position));
-            startActivity(intent);
+            if (Utils.isTablet(getActivity()))
+                {
+                    mFeedback.dataChange((Result) parent
+                            .getItemAtPosition
+                                    (position));
+                } else
+                {
+                    Intent intent = new Intent(getActivity(), MovieDetailActivity.class);
+                    intent.putExtra(MovieDetailFragment.ARG_PARAM1, (Result) parent
+                            .getItemAtPosition
+                                    (position));
+                    startActivity(intent);
+                }
+        }
+
+    @Override
+    public void onScrollStateChanged(AbsListView view, int scrollState)
+        {
+
+        }
+
+    @Override
+    public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int
+            totalItemCount)
+        {
+            if (totalItemCount == 0 || requesting)
+                {
+                    return;
+                }
+            if (totalItemCount <= view.getFirstVisiblePosition() + visibleItemCount + 4)
+                {
+                    fetchMoviesWithConstrain(mCurrentConstrain, false);
+                } else
+                {
+                    Logger.debug(this, "else statemeny");
+                }
+
         }
 
     interface Feedback
     {
         void unSelectMenuItems();
+
+        void dataChange(Result result);
     }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig)
+        {
+            super.onConfigurationChanged(newConfig);
+        }
 }

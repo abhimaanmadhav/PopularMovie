@@ -13,8 +13,6 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
-import movies.constants.Constants;
-
 /**
  * Created by Abhimaan on 28/01/16.
  */
@@ -29,16 +27,19 @@ public class MovieAdapter extends BaseAdapter
             this.mContext = mContext;
             this.list = list;
             Picasso.with(mContext).setLoggingEnabled(true);
-            Picasso.with(mContext).setIndicatorsEnabled(true);
 
         }
 
-    public void resetData(ArrayList<Result> list)
+    public void addData(ArrayList<Result> list)
         {
-            this.list = list;
+            this.list.addAll(list);
             notifyDataSetChanged();
         }
-
+    public void clear()
+        {
+            this.list.clear();
+            notifyDataSetChanged();
+        }
     @Override
     public int getCount()
         {
@@ -70,17 +71,18 @@ public class MovieAdapter extends BaseAdapter
                     convertView.setTag(holder);
                 }
             holder = (Holder) convertView.getTag();
-            Log.d("adapter", Constants.PHOTOURL + "/w500" + list.get(position).posterPath);
+            Log.d("adapter",  list.get(position).getPosterPath());
             if (list.get(position).posterPath != null)
                 {
-                    Picasso.with(mContext).load(Constants.PHOTOURL + "/w185" + list.get
+                    Picasso.with(mContext).load(list.get
                             (position)
-                            .posterPath
+                            .getPosterPath()
                             .trim()).fit()
                             .into(holder.posterImage);
-                }else{
-                holder.posterImage.setImageBitmap(null);
-            }
+                } else
+                {
+                    holder.posterImage.setImageBitmap(null);
+                }
             return convertView;
         }
 

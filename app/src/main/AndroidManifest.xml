@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest package="movies.abhimaan.com.popularmovies1"
-          xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest
+    package="movies.abhimaan.com.popularmovies1"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
 
     <application
         android:allowBackup="true"
@@ -11,7 +14,9 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MovieActivity">
+        <activity
+            android:name=".MovieActivity"
+            android:configChanges="screenLayout|screenSize|fontScale|orientation">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
@@ -19,9 +24,13 @@
             </intent-filter>
         </activity>
         <activity
+            android:configChanges="screenLayout|screenSize|fontScale|orientation"
             android:name="movies.movieDetails.MovieDetailActivity"
             android:label="@string/title_activity_movie_detail"
             android:theme="@style/AppTheme">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="movies.abhimaan.com.popularmovies1.MovieActivity"/>
         </activity>
     </application>
 

@@ -12,7 +12,8 @@ import retrofit2.http.Query;
 public interface FetchMovies
 {
     @GET("/3/discover/movie")
-    Call<MovieResponse> getMovies(@Query("api_key") String key, @Query("sort_by") String sortOrder);
+    Call<MovieResponse> getMovies(@Query("api_key") String key, @Query("sort_by") String
+            sortOrder, @Query("page") int pageNo);
 
 
 }

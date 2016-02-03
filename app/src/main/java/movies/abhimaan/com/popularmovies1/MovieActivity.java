@@ -1,17 +1,25 @@
 package movies.abhimaan.com.popularmovies1;
 
+import android.content.res.Configuration;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
-public class MovieActivity extends AppCompatActivity implements MovieGridFragment.Feedback
+import com.abhimaan.Result;
+
+import movies.BaseActivity;
+import movies.movieDetails.MovieDetailFragment;
+import utility.Utils;
+
+public class MovieActivity extends BaseActivity implements MovieGridFragment.Feedback
 {
 
     final String TAG = "MovieActivity";
     final String TAGMOVIEGRID = "moviegrid";
+    final String TAGMOVIEDETAIL = "moviedetail";
     MenuItem popular, rating;
+    MovieDetailFragment detailFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -21,6 +29,12 @@ public class MovieActivity extends AppCompatActivity implements MovieGridFragmen
             setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
             getFragmentManager().beginTransaction().add(R.id.movie_grid, new MovieGridFragment(),
                     TAGMOVIEGRID).commit();
+            if (Utils.isTablet(this))
+                {
+                    detailFragment = MovieDetailFragment.newInstance(new Result());
+                    getFragmentManager().beginTransaction().add(R.id.movie_detail, detailFragment,
+                            TAGMOVIEDETAIL).commit();
+                }
         }
 
     @Override
@@ -43,7 +57,8 @@ public class MovieActivity extends AppCompatActivity implements MovieGridFragmen
                         if (!item.isChecked())
                             {
                                 ((MovieGridFragment) getFragmentManager().findFragmentByTag
-                                        (TAGMOVIEGRID)).fetchMoviesWithConstrain("popularity.desc");
+                                        (TAGMOVIEGRID)).fetchMoviesWithConstrain("popularity" +
+                                        ".desc", true);
                                 item.setChecked(true);
                                 rating.setChecked(false);
                             }
@@ -55,7 +70,7 @@ public class MovieActivity extends AppCompatActivity implements MovieGridFragmen
                             {
                                 ((MovieGridFragment) getFragmentManager().findFragmentByTag
                                         (TAGMOVIEGRID)).fetchMoviesWithConstrain("vote_average" +
-                                        ".desc");
+                                        ".desc", true);
                                 item.setChecked(true);
                                 popular.setChecked(false);
                             }
@@ -71,5 +86,20 @@ public class MovieActivity extends AppCompatActivity implements MovieGridFragmen
         {
             popular.setChecked(false);
             rating.setChecked(false);
+        }
+
+    @Override
+    public void dataChange(Result result)
+        {
+            if (isTablet())
+                {
+                    detailFragment.setData(result);
+                }
+        }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig)
+        {
+            super.onConfigurationChanged(newConfig);
         }
 }
