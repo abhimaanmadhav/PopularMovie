@@ -1,4 +1,4 @@
-package com.abhimaan;
+package movies.abhimaan.com.popularmovies1;
 
 
 import android.os.Parcel;
@@ -12,9 +12,9 @@ import java.util.List;
 
 import movies.constants.Constants;
 
-public class Result implements Parcelable
+public class MovieDetailsModel implements Parcelable
 {
-    public Result()
+    public MovieDetailsModel()
         {
             posterPath = "";
             releaseDate = "";
@@ -66,7 +66,7 @@ public class Result implements Parcelable
     @Override
     public String toString()
         {
-            return "Result{" +
+            return "MovieDetailsModel{" +
                     "posterPath='" + posterPath + '\'' +
                     ", adult=" + adult +
                     ", overview='" + overview + '\'' +
@@ -258,7 +258,7 @@ public class Result implements Parcelable
             dest.writeFloat(getVoteAverage());
         }
 
-    protected Result(Parcel in)
+    protected MovieDetailsModel(Parcel in)
         {
             posterPath = in.readString();
             overview = in.readString();
@@ -270,18 +270,18 @@ public class Result implements Parcelable
             backdropPath = in.readString();
         }
 
-    public static final Creator<Result> CREATOR = new Creator<Result>()
+    public static final Creator<MovieDetailsModel> CREATOR = new Creator<MovieDetailsModel>()
     {
         @Override
-        public Result createFromParcel(Parcel in)
+        public MovieDetailsModel createFromParcel(Parcel in)
             {
-                return new Result(in);
+                return new MovieDetailsModel(in);
             }
 
         @Override
-        public Result[] newArray(int size)
+        public MovieDetailsModel[] newArray(int size)
             {
-                return new Result[size];
+                return new MovieDetailsModel[size];
             }
     };
 }

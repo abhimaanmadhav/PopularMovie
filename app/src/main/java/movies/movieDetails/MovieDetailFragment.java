@@ -10,7 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.abhimaan.Result;
+import movies.abhimaan.com.popularmovies1.MovieDetailsModel;
 import com.squareup.picasso.Picasso;
 
 import movies.abhimaan.com.popularmovies1.R;
@@ -28,7 +28,7 @@ import utility.Logger;
 public class MovieDetailFragment extends Fragment
 {
     public static final String ARG_PARAM1 = "details";
-    Result moveDetailsObj;
+    MovieDetailsModel moveDetailsObj;
 
     private OnFragmentInteractionListener mListener;
     FragmentMovieDetailBinding mBinding;
@@ -41,7 +41,7 @@ public class MovieDetailFragment extends Fragment
      * @param param2 Parameter 2.
      * @return A new instance of fragment MovieDetailFragment.
      */
-    public static MovieDetailFragment newInstance(Result movie)
+    public static MovieDetailFragment newInstance(MovieDetailsModel movie)
         {
             MovieDetailFragment fragment = new MovieDetailFragment();
             Bundle args = new Bundle();
@@ -71,7 +71,7 @@ public class MovieDetailFragment extends Fragment
             return mBinding.getRoot();
         }
 
-    public void setData(Result data)
+    public void setData(MovieDetailsModel data)
         {
             moveDetailsObj = data;
             mBinding.setMoveDetailsObj(moveDetailsObj);

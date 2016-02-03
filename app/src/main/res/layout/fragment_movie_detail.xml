@@ -4,7 +4,7 @@
 
         <variable
             name="moveDetailsObj"
-            type="com.abhimaan.Result"/>
+            type="movies.abhimaan.com.popularmovies1.MovieDetailsModel"/>
     </data>
 
     <LinearLayout

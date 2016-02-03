@@ -8,7 +8,6 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 
-import com.abhimaan.Result;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -20,9 +19,9 @@ public class MovieAdapter extends BaseAdapter
 {
     Context mContext;
     Holder holder;
-    ArrayList<Result> list;
+    ArrayList<MovieDetailsModel> list;
 
-    public MovieAdapter(Context mContext, ArrayList<Result> list)
+    public MovieAdapter(Context mContext, ArrayList<MovieDetailsModel> list)
         {
             this.mContext = mContext;
             this.list = list;
@@ -30,7 +29,7 @@ public class MovieAdapter extends BaseAdapter
 
         }
 
-    public void addData(ArrayList<Result> list)
+    public void addData(ArrayList<MovieDetailsModel> list)
         {
             this.list.addAll(list);
             notifyDataSetChanged();

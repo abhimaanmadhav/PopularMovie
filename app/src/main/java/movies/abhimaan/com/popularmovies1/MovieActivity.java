@@ -6,13 +6,11 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.abhimaan.Result;
-
 import movies.BaseActivity;
 import movies.movieDetails.MovieDetailFragment;
 import utility.Utils;
 
-public class MovieActivity extends BaseActivity implements MovieGridFragment.Feedback
+public class MovieActivity extends BaseActivity implements MovieFragment.Feedback
 {
 
     final String TAG = "MovieActivity";
@@ -27,11 +25,11 @@ public class MovieActivity extends BaseActivity implements MovieGridFragment.Fee
             super.onCreate(savedInstanceState);
             setContentView(R.layout.activity_movie);
             setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
-            getFragmentManager().beginTransaction().add(R.id.movie_grid, new MovieGridFragment(),
+            getFragmentManager().beginTransaction().add(R.id.movie_grid, new MovieFragment(),
                     TAGMOVIEGRID).commit();
             if (Utils.isTablet(this))
                 {
-                    detailFragment = MovieDetailFragment.newInstance(new Result());
+                    detailFragment = MovieDetailFragment.newInstance(new MovieDetailsModel());
                     getFragmentManager().beginTransaction().add(R.id.movie_detail, detailFragment,
                             TAGMOVIEDETAIL).commit();
                 }
@@ -56,7 +54,7 @@ public class MovieActivity extends BaseActivity implements MovieGridFragment.Fee
                     {
                         if (!item.isChecked())
                             {
-                                ((MovieGridFragment) getFragmentManager().findFragmentByTag
+                                ((MovieFragment) getFragmentManager().findFragmentByTag
                                         (TAGMOVIEGRID)).fetchMoviesWithConstrain("popularity" +
                                         ".desc", true);
                                 item.setChecked(true);
@@ -68,7 +66,7 @@ public class MovieActivity extends BaseActivity implements MovieGridFragment.Fee
                     {
                         if (!item.isChecked())
                             {
-                                ((MovieGridFragment) getFragmentManager().findFragmentByTag
+                                ((MovieFragment) getFragmentManager().findFragmentByTag
                                         (TAGMOVIEGRID)).fetchMoviesWithConstrain("vote_average" +
                                         ".desc", true);
                                 item.setChecked(true);
@@ -89,11 +87,11 @@ public class MovieActivity extends BaseActivity implements MovieGridFragment.Fee
         }
 
     @Override
-    public void dataChange(Result result)
+    public void dataChange(MovieDetailsModel movieDetailsModel)
         {
             if (isTablet())
                 {
-                    detailFragment.setData(result);
+                    detailFragment.setData(movieDetailsModel);
                 }
         }
 

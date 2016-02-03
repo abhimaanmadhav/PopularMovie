@@ -16,7 +16,8 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".MovieActivity"
-            android:configChanges="screenLayout|screenSize|fontScale|orientation">
+            android:configChanges="screenLayout|screenSize|fontScale|orientation"
+            android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
@@ -24,8 +25,8 @@
             </intent-filter>
         </activity>
         <activity
-            android:configChanges="screenLayout|screenSize|fontScale|orientation"
             android:name="movies.movieDetails.MovieDetailActivity"
+            android:configChanges="screenLayout|screenSize|fontScale|orientation"
             android:label="@string/title_activity_movie_detail"
             android:theme="@style/AppTheme">
             <meta-data

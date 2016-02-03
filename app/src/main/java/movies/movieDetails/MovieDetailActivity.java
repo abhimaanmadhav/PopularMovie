@@ -2,14 +2,14 @@ package movies.movieDetails;
 
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
-import com.abhimaan.Result;
+import movies.abhimaan.com.popularmovies1.MovieDetailsModel;
 
+import movies.BaseActivity;
 import movies.abhimaan.com.popularmovies1.R;
 
-public class MovieDetailActivity extends AppCompatActivity
+public class MovieDetailActivity extends BaseActivity
 {
 
     @Override
@@ -22,7 +22,7 @@ public class MovieDetailActivity extends AppCompatActivity
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getFragmentManager().beginTransaction().add(R.id.fragment_holder, MovieDetailFragment
                     .newInstance
-                            ((Result) getIntent().getParcelableExtra(MovieDetailFragment.ARG_PARAM1))).commit();
+                            ((MovieDetailsModel) getIntent().getParcelableExtra(MovieDetailFragment.ARG_PARAM1))).commit();
 
         }
 

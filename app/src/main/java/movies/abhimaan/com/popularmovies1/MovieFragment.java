@@ -15,8 +15,6 @@ import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.Toast;
 
-import com.abhimaan.MovieResponse;
-import com.abhimaan.Result;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -35,10 +33,10 @@ import utility.Utils;
 /**
  * Created by Abhimaan on 01/02/16.
  */
-public class MovieGridFragment extends Fragment implements Callback<MovieResponse>, AdapterView
+public class MovieFragment extends Fragment implements Callback<MovieResponse>, AdapterView
         .OnItemClickListener, AbsListView.OnScrollListener
 {
-    FetchMovies service;
+    MoviesService service;
     String TAG = "moviefragment";
 
     MovieAdapter mMovieAdapter;
@@ -59,7 +57,7 @@ public class MovieGridFragment extends Fragment implements Callback<MovieRespons
                     .baseUrl(Constants.BASEURL).addConverterFactory(GsonConverterFactory
                             .create(gson))
                     .build();
-            service = retrofit.create(FetchMovies.class);
+            service = retrofit.create(MoviesService.class);
             mMovieAdapter = new MovieAdapter(getActivity(), new ArrayList(0));
             if (Utils.isConnected(getActivity()))
                 {
@@ -128,11 +126,11 @@ public class MovieGridFragment extends Fragment implements Callback<MovieRespons
                 {
                     Log.d(TAG, "sucess code" + response.body().toString());
                     MovieResponse data = response.body();
-                    mMovieAdapter.addData(data.results);
+                    mMovieAdapter.addData(data.movieDetailseModels);
                     totalPages = data.totalPages;
-                    if (data.page == 1)
+                    if (data.page == 1 && !data.movieDetailseModels.isEmpty())
                         {
-                            mFeedback.dataChange(data.results.get(0));
+                            mFeedback.dataChange(data.movieDetailseModels.get(0));
                         }
                 } else
                 {
@@ -170,7 +168,10 @@ public class MovieGridFragment extends Fragment implements Callback<MovieRespons
 
                 }
             requesting = true;
-            service.getMovies(Constants.APIKEY, constrain, ++page).enqueue(this);
+            if (Utils.isConnected(getActivity()))
+                {
+                    service.getMovies(Constants.APIKEY, constrain, ++page).enqueue(this);
+                }
             mCurrentConstrain = constrain;
         }
 
@@ -179,13 +180,13 @@ public class MovieGridFragment extends Fragment implements Callback<MovieRespons
         {
             if (Utils.isTablet(getActivity()))
                 {
-                    mFeedback.dataChange((Result) parent
+                    mFeedback.dataChange((MovieDetailsModel) parent
                             .getItemAtPosition
                                     (position));
                 } else
                 {
                     Intent intent = new Intent(getActivity(), MovieDetailActivity.class);
-                    intent.putExtra(MovieDetailFragment.ARG_PARAM1, (Result) parent
+                    intent.putExtra(MovieDetailFragment.ARG_PARAM1, (MovieDetailsModel) parent
                             .getItemAtPosition
                                     (position));
                     startActivity(intent);
@@ -220,7 +221,7 @@ public class MovieGridFragment extends Fragment implements Callback<MovieRespons
     {
         void unSelectMenuItems();
 
-        void dataChange(Result result);
+        void dataChange(MovieDetailsModel movieDetailsModel);
     }
 
     @Override

@@ -1,5 +1,5 @@
 
-package com.abhimaan;
+package movies.abhimaan.com.popularmovies1;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
@@ -13,7 +13,7 @@ public class MovieResponse
     public int page;
     @SerializedName("results")
     @Expose
-    public ArrayList<Result> results = new ArrayList<Result>();
+    public ArrayList<MovieDetailsModel> movieDetailseModels = new ArrayList<MovieDetailsModel>();
     @SerializedName("total_results")
     @Expose
     public int totalResults;
@@ -29,7 +29,7 @@ public class MovieResponse
                     "page=" + page +
                     ", totalResults=" + totalResults +
                     ", totalPages=" + totalPages +
-                    ", results=" + results +
+                    ", movieDetailseModels=" + movieDetailseModels +
                     '}';
         }
 }
