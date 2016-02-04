@@ -1,16 +1,15 @@
 package movies.movieDetails;
 
-import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 
-import movies.abhimaan.com.popularmovies1.MovieDetailsModel;
-
 import movies.BaseActivity;
+import movies.abhimaan.com.popularmovies1.MovieDetailsModel;
 import movies.abhimaan.com.popularmovies1.R;
 
 public class MovieDetailActivity extends BaseActivity
 {
+    private final String TAGMOVIEDETAILS = "movieDetails";
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -20,15 +19,20 @@ public class MovieDetailActivity extends BaseActivity
             Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
             setSupportActionBar(toolbar);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getFragmentManager().beginTransaction().add(R.id.fragment_holder, MovieDetailFragment
-                    .newInstance
-                            ((MovieDetailsModel) getIntent().getParcelableExtra(MovieDetailFragment.ARG_PARAM1))).commit();
+            MovieDetailFragment fragment = (MovieDetailFragment) getFragmentManager()
+                    .findFragmentByTag(TAGMOVIEDETAILS);
+            if (fragment == null)
+                {
+                    getFragmentManager().beginTransaction().add(R.id.fragment_holder,
+                            MovieDetailFragment
+                            .newInstance
+                                    ((MovieDetailsModel) getIntent().getParcelableExtra
+                                            (MovieDetailFragment.ARG_PARAM1)), TAGMOVIEDETAILS)
+                            .commit();
+
+                }
 
         }
 
-    @Override
-    public void onConfigurationChanged(Configuration newConfig)
-        {
-            super.onConfigurationChanged(newConfig);
-        }
+
 }
