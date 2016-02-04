@@ -25,6 +25,7 @@ public class MovieAdapter extends BaseAdapter
         {
             this.mContext = mContext;
             this.list = list;
+
 //            Picasso.with(mContext).setIndicatorsEnabled(true);
 
         }
@@ -88,6 +89,7 @@ public class MovieAdapter extends BaseAdapter
             //  Can i use any better technic to show its selected??
             if (list.get(position).selected)
                 {
+                    currentSelection = position;
                     holder.selector.setVisibility(View.VISIBLE);
                 } else
                 {
@@ -108,5 +110,10 @@ public class MovieAdapter extends BaseAdapter
             currentSelection = position;
             list.get(currentSelection).selected = true;
             notifyDataSetChanged();
+        }
+
+    public ArrayList<MovieDetailsModel> getData()
+        {
+            return list;
         }
 }

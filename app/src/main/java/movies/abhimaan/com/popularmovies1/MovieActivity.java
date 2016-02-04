@@ -1,13 +1,14 @@
 package movies.abhimaan.com.popularmovies1;
 
-import android.content.res.Configuration;
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import movies.BaseActivity;
 import movies.movieDetails.MovieDetailFragment;
+import utility.Logger;
 import utility.Utils;
 
 public class MovieActivity extends BaseActivity implements MovieFragment.Feedback
@@ -25,14 +26,29 @@ public class MovieActivity extends BaseActivity implements MovieFragment.Feedbac
             super.onCreate(savedInstanceState);
             setContentView(R.layout.activity_movie);
             setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
-            getFragmentManager().beginTransaction().add(R.id.movie_grid, new MovieFragment(),
-                    TAGMOVIEGRID).commit();
+            MovieFragment fragment = (MovieFragment) getFragmentManager().findFragmentByTag
+                    (TAGMOVIEGRID);
+            if (fragment == null)
+                {
+                    fragment = new MovieFragment();
+                    getFragmentManager().beginTransaction().add(R.id.movie_grid, fragment, TAGMOVIEGRID)
+                            .commit();
+                }
+
             if (Utils.isTablet(this))
                 {
-                    detailFragment = MovieDetailFragment.newInstance(new MovieDetailsModel());
-                    getFragmentManager().beginTransaction().add(R.id.movie_detail, detailFragment,
-                            TAGMOVIEDETAIL).commit();
+                     detailFragment = (MovieDetailFragment) getFragmentManager().findFragmentByTag
+                            (TAGMOVIEDETAIL);
+                    if (detailFragment == null)
+                        {
+                            detailFragment = MovieDetailFragment.newInstance(new MovieDetailsModel());
+                            getFragmentManager().beginTransaction().add(R.id.movie_detail, detailFragment,
+                                    TAGMOVIEDETAIL).commit();
+                        }
+
+
                 }
+            Logger.error(this, "move activyt on create " + (savedInstanceState == null));
         }
 
     @Override
@@ -96,10 +112,17 @@ public class MovieActivity extends BaseActivity implements MovieFragment.Feedbac
         }
 
 
+    @Override
+    public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState)
+        {
+            super.onSaveInstanceState(outState, outPersistentState);
+            Logger.error(this, "move activty on saved instace");
+        }
 
     @Override
-    public void onConfigurationChanged(Configuration newConfig)
+    public void onRestoreInstanceState(Bundle savedInstanceState, PersistableBundle persistentState)
         {
-            super.onConfigurationChanged(newConfig);
+            Logger.error(this, "move activyt on restore instace");
+            super.onRestoreInstanceState(savedInstanceState, persistentState);
         }
 }

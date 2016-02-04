@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -38,7 +37,7 @@ public class MovieFragment extends Fragment implements Callback<MovieResponse>, 
 {
     MoviesService service;
     String TAG = "moviefragment";
-
+    private final String GRIDPOS = "GRID_POS", GRID_DATA = "griddata";
     GridView mGridView;
     Feedback mFeedback;
     int page = 0;
@@ -46,6 +45,7 @@ public class MovieFragment extends Fragment implements Callback<MovieResponse>, 
     String mCurrentConstrain = null;
     int totalPages = -1;
     int selectedPosition = 1;
+    ArrayList<MovieDetailsModel> list;
 
     @Override
     public void onCreate(Bundle savedInstanceState)
@@ -68,6 +68,7 @@ public class MovieFragment extends Fragment implements Callback<MovieResponse>, 
                     Toast.makeText(getActivity(), getString(R.string.no_network_msg), Toast
                             .LENGTH_LONG).show();
                 }
+            list = new ArrayList<MovieDetailsModel>();
         }
 
     @Override
@@ -108,9 +109,11 @@ public class MovieFragment extends Fragment implements Callback<MovieResponse>, 
         {
             View view = inflater.inflate(R.layout.fragment_movie, container, false);
             mGridView = (GridView) view.findViewById(R.id.gridview);
-            mGridView.setAdapter(new MovieAdapter(getActivity(), new ArrayList(0)));
+
             mGridView.setOnItemClickListener(this);
             mGridView.setOnScrollListener(this);
+
+            mGridView.setAdapter(new MovieAdapter(getActivity(), list));
 //            HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
 //            interceptor.setLevel(HttpLoggingInterceptor.Level.BASIC);
 //            OkHttpClient client = new OkHttpClient.Builder().addInterceptor(interceptor).build();
@@ -130,6 +133,7 @@ public class MovieFragment extends Fragment implements Callback<MovieResponse>, 
                     if (data.page == 1 && !data.movieDetailseModels.isEmpty() && Utils.isTablet
                             (getActivity()))
                         {
+                            ((MovieAdapter) mGridView.getAdapter()).setSelectedPosition(0);
                             View view = mGridView
                                     .getAdapter().getView(0, null, mGridView);
 
@@ -188,9 +192,7 @@ public class MovieFragment extends Fragment implements Callback<MovieResponse>, 
             selectedPosition = position;
             if (Utils.isTablet(getActivity()))
                 {
-                    MovieDetailsModel model = (MovieDetailsModel) parent
-                            .getItemAtPosition
-                                    (position);
+
                     mFeedback.dataChange((MovieDetailsModel) parent
                             .getItemAtPosition
                                     (position));
@@ -239,8 +241,13 @@ public class MovieFragment extends Fragment implements Callback<MovieResponse>, 
 
 
     @Override
-    public void onConfigurationChanged(Configuration newConfig)
+    public void onSaveInstanceState(Bundle outState)
         {
-            super.onConfigurationChanged(newConfig);
+            Logger.error(this, "move fragment on saved instace");
+
+            outState.putInt(GRIDPOS, mGridView.getFirstVisiblePosition());
+            outState.putParcelableArrayList(GRID_DATA, ((MovieAdapter) mGridView.getAdapter())
+                    .getData());
+            super.onSaveInstanceState(outState);
         }
 }

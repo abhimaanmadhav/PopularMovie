@@ -1,7 +1,6 @@
 package movies.movieDetails;
 
 import android.app.Fragment;
-import android.content.res.Configuration;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -62,6 +61,10 @@ public class MovieDetailFragment extends Fragment
         {
             mBinding = DataBindingUtil.inflate(inflater, R.layout
                     .fragment_movie_detail, container, false);
+            if (savedInstanceState != null)
+                {
+                    moveDetailsObj = savedInstanceState.getParcelable("details");
+                }
             mBinding.setMoveDetailsObj(moveDetailsObj);
             Picasso.with(getActivity()).load(moveDetailsObj.getPosterPath()).fit().into(mBinding
                     .poster);
@@ -79,8 +82,9 @@ public class MovieDetailFragment extends Fragment
 
 
     @Override
-    public void onConfigurationChanged(Configuration newConfig)
+    public void onSaveInstanceState(Bundle outState)
         {
-            super.onConfigurationChanged(newConfig);
+            outState.putParcelable("details", moveDetailsObj);
+            super.onSaveInstanceState(outState);
         }
 }
