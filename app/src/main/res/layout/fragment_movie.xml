@@ -11,6 +11,8 @@
         android:layout_height="match_parent"
         android:layout_centerInParent="true"
         android:numColumns="auto_fit"
+        android:stretchMode="columnWidth"
+        android:choiceMode="multipleChoice"
         />
 
     <ViewStub

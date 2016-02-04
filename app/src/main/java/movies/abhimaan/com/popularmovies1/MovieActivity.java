@@ -95,6 +95,8 @@ public class MovieActivity extends BaseActivity implements MovieFragment.Feedbac
                 }
         }
 
+
+
     @Override
     public void onConfigurationChanged(Configuration newConfig)
         {

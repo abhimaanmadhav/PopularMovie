@@ -39,12 +39,13 @@ public class MovieFragment extends Fragment implements Callback<MovieResponse>, 
     MoviesService service;
     String TAG = "moviefragment";
 
-    MovieAdapter mMovieAdapter;
+    GridView mGridView;
     Feedback mFeedback;
     int page = 0;
     boolean requesting = false;
     String mCurrentConstrain = null;
     int totalPages = -1;
+    int selectedPosition = 1;
 
     @Override
     public void onCreate(Bundle savedInstanceState)
@@ -58,7 +59,7 @@ public class MovieFragment extends Fragment implements Callback<MovieResponse>, 
                             .create(gson))
                     .build();
             service = retrofit.create(MoviesService.class);
-            mMovieAdapter = new MovieAdapter(getActivity(), new ArrayList(0));
+            setRetainInstance(true);
             if (Utils.isConnected(getActivity()))
                 {
                     fetchMoviesWithConstrain("popularity.desc", true);
@@ -106,15 +107,13 @@ public class MovieFragment extends Fragment implements Callback<MovieResponse>, 
             savedInstanceState)
         {
             View view = inflater.inflate(R.layout.fragment_movie, container, false);
-            GridView gridView;
-            gridView = (GridView) view.findViewById(R.id.gridview);
-            gridView.setAdapter(mMovieAdapter);
-            gridView.setOnItemClickListener(this);
-            gridView.setOnScrollListener(this);
+            mGridView = (GridView) view.findViewById(R.id.gridview);
+            mGridView.setAdapter(new MovieAdapter(getActivity(), new ArrayList(0)));
+            mGridView.setOnItemClickListener(this);
+            mGridView.setOnScrollListener(this);
 //            HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
 //            interceptor.setLevel(HttpLoggingInterceptor.Level.BASIC);
 //            OkHttpClient client = new OkHttpClient.Builder().addInterceptor(interceptor).build();
-
             return view;
         }
 
@@ -126,11 +125,15 @@ public class MovieFragment extends Fragment implements Callback<MovieResponse>, 
                 {
                     Log.d(TAG, "sucess code" + response.body().toString());
                     MovieResponse data = response.body();
-                    mMovieAdapter.addData(data.movieDetailseModels);
+                    ((MovieAdapter) mGridView.getAdapter()).addData(data.movieDetailseModels);
                     totalPages = data.totalPages;
-                    if (data.page == 1 && !data.movieDetailseModels.isEmpty())
+                    if (data.page == 1 && !data.movieDetailseModels.isEmpty() && Utils.isTablet
+                            (getActivity()))
                         {
-                            mFeedback.dataChange(data.movieDetailseModels.get(0));
+                            View view = mGridView
+                                    .getAdapter().getView(0, null, mGridView);
+
+                            mGridView.getOnItemClickListener().onItemClick(mGridView, view, 0, 0);
                         }
                 } else
                 {
@@ -147,7 +150,10 @@ public class MovieFragment extends Fragment implements Callback<MovieResponse>, 
         {
             Log.d(TAG, "error code" + t.toString());
             page--;
-
+            if (page == 1)
+                {
+                    mFeedback.unSelectMenuItems();
+                }
             Toast.makeText(getActivity(), getString(R.string.sort_rating), Toast.LENGTH_LONG)
                     .show();
             requesting = false;
@@ -160,11 +166,11 @@ public class MovieFragment extends Fragment implements Callback<MovieResponse>, 
                 {
                     return;
                 }
-            if (reset)
+            if (reset && mGridView != null)
                 {
                     page = 0;
                     totalPages = -1;
-                    mMovieAdapter.clear();
+                    ((MovieAdapter) mGridView.getAdapter()).clear();
 
                 }
             requesting = true;
@@ -178,11 +184,18 @@ public class MovieFragment extends Fragment implements Callback<MovieResponse>, 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id)
         {
+
+            selectedPosition = position;
             if (Utils.isTablet(getActivity()))
                 {
+                    MovieDetailsModel model = (MovieDetailsModel) parent
+                            .getItemAtPosition
+                                    (position);
                     mFeedback.dataChange((MovieDetailsModel) parent
                             .getItemAtPosition
                                     (position));
+                    ((MovieAdapter) mGridView.getAdapter()).setSelectedPosition(position);
+
                 } else
                 {
                     Intent intent = new Intent(getActivity(), MovieDetailActivity.class);
@@ -223,6 +236,7 @@ public class MovieFragment extends Fragment implements Callback<MovieResponse>, 
 
         void dataChange(MovieDetailsModel movieDetailsModel);
     }
+
 
     @Override
     public void onConfigurationChanged(Configuration newConfig)

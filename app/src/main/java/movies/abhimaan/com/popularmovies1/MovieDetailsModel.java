@@ -20,6 +20,7 @@ public class MovieDetailsModel implements Parcelable
             releaseDate = "";
         }
 
+    public boolean selected = false;
     @SerializedName("poster_path")
     @Expose
     public String posterPath;
@@ -61,7 +62,7 @@ public class MovieDetailsModel implements Parcelable
     public Boolean video;
     @SerializedName("vote_average")
     @Expose
-    public Float voteAverage=0f;
+    public Float voteAverage = 0f;
 
     @Override
     public String toString()

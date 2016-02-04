@@ -1,7 +1,6 @@
 package movies.abhimaan.com.popularmovies1;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,12 +19,13 @@ public class MovieAdapter extends BaseAdapter
     Context mContext;
     Holder holder;
     ArrayList<MovieDetailsModel> list;
+    int currentSelection = -1;
 
     public MovieAdapter(Context mContext, ArrayList<MovieDetailsModel> list)
         {
             this.mContext = mContext;
             this.list = list;
-            Picasso.with(mContext).setLoggingEnabled(true);
+//            Picasso.with(mContext).setIndicatorsEnabled(true);
 
         }
 
@@ -34,11 +34,13 @@ public class MovieAdapter extends BaseAdapter
             this.list.addAll(list);
             notifyDataSetChanged();
         }
+
     public void clear()
         {
             this.list.clear();
             notifyDataSetChanged();
         }
+
     @Override
     public int getCount()
         {
@@ -67,10 +69,10 @@ public class MovieAdapter extends BaseAdapter
                             parent, false);
                     holder = new Holder();
                     holder.posterImage = (ImageView) convertView.findViewById(R.id.poster);
+                    holder.selector = (ImageView) convertView.findViewById(R.id.poster_selected);
                     convertView.setTag(holder);
                 }
             holder = (Holder) convertView.getTag();
-            Log.d("adapter",  list.get(position).getPosterPath());
             if (list.get(position).posterPath != null)
                 {
                     Picasso.with(mContext).load(list.get
@@ -82,11 +84,29 @@ public class MovieAdapter extends BaseAdapter
                 {
                     holder.posterImage.setImageBitmap(null);
                 }
+
+            //  Can i use any better technic to show its selected??
+            if (list.get(position).selected)
+                {
+                    holder.selector.setVisibility(View.VISIBLE);
+                } else
+                {
+                    holder.selector.setVisibility(View.GONE);
+                }
             return convertView;
         }
 
     class Holder
     {
-        ImageView posterImage;
+        ImageView posterImage, selector;
     }
+
+    void setSelectedPosition(int position)
+        {
+            if (currentSelection != -1)
+                list.get(currentSelection).selected = false;
+            currentSelection = position;
+            list.get(currentSelection).selected = true;
+            notifyDataSetChanged();
+        }
 }
