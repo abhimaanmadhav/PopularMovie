@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorAccent"
     tools:context="movies.abhimaan.com.popularmovies1.MovieActivity">
 
     <LinearLayout
@@ -22,13 +23,19 @@
             <RelativeLayout
                 android:id="@+id/movie_grid"
                 android:layout_width="0dp"
-                android:layout_weight="5"
-                android:layout_height="match_parent"/>
-            <RelativeLayout
+                android:layout_height="match_parent"
+                android:layout_weight="5"/>
+
+            <View
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:background="@color/grey"/>
+
+            <android.support.v4.widget.NestedScrollView
                 android:id="@+id/movie_detail"
                 android:layout_width="0dp"
-                android:layout_weight="5"
-                android:layout_height="match_parent"/>
+                android:layout_height="match_parent"
+                android:layout_weight="5"/>
         </LinearLayout>
 
     </LinearLayout>

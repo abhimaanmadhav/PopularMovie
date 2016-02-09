@@ -12,7 +12,7 @@ import java.util.List;
 
 import movies.constants.Constants;
 
-public class MovieDetailsModel implements Parcelable
+public class MovieDetailsModel  implements Parcelable
 {
     public MovieDetailsModel()
         {
@@ -21,6 +21,7 @@ public class MovieDetailsModel implements Parcelable
         }
 
     public boolean selected = false;
+    public boolean favorite = false;
     @SerializedName("poster_path")
     @Expose
     public String posterPath;
@@ -38,7 +39,7 @@ public class MovieDetailsModel implements Parcelable
     public List<Integer> genreIds = new ArrayList<Integer>();
     @SerializedName("id")
     @Expose
-    public Integer id;
+    public Integer id = -1;
     @SerializedName("original_title")
     @Expose
     public String originalTitle;
@@ -88,6 +89,11 @@ public class MovieDetailsModel implements Parcelable
     public String getPosterPath()
         {
             return Constants.PHOTOURL + posterPath;
+        }
+
+    public String getPath()
+        {
+            return posterPath;
         }
 
     public void setPosterPath(String posterPath)
@@ -242,6 +248,25 @@ public class MovieDetailsModel implements Parcelable
             this.voteAverage = voteAverage;
         }
 
+    public boolean isSelected()
+        {
+            return selected;
+        }
+
+    public void setSelected(boolean selected)
+        {
+            this.selected = selected;
+        }
+
+    public boolean isFavorite()
+        {
+            return favorite;
+        }
+
+    public void setFavorite(boolean favorite)
+        {
+            this.favorite = favorite;
+        }
 
     @Override
     public int describeContents()
@@ -257,6 +282,15 @@ public class MovieDetailsModel implements Parcelable
             dest.writeString(getReleaseDate());
             dest.writeString(getOriginalTitle());
             dest.writeFloat(getVoteAverage());
+            dest.writeInt(getId());
+            if (isFavorite())
+                {
+                    dest.writeInt(1);
+                } else
+                {
+                    dest.writeInt(0);
+                }
+
         }
 
     protected MovieDetailsModel(Parcel in)
@@ -266,9 +300,14 @@ public class MovieDetailsModel implements Parcelable
             releaseDate = in.readString();
             originalTitle = in.readString();
             setVoteAverage(in.readFloat());
-            originalLanguage = in.readString();
-            title = in.readString();
-            backdropPath = in.readString();
+            setId(in.readInt());
+            if (in.readInt() == 1)
+                {
+                    setFavorite(true);
+                } else
+                {
+                    setFavorite(false);
+                }
         }
 
     public static final Creator<MovieDetailsModel> CREATOR = new Creator<MovieDetailsModel>()
@@ -285,4 +324,7 @@ public class MovieDetailsModel implements Parcelable
                 return new MovieDetailsModel[size];
             }
     };
+
+
+
 }

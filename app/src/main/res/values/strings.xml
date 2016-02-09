@@ -6,10 +6,14 @@
     <string name="network_unavailable">Please check your internet connection</string>
     <string name="title_activity_movie_detail">MovieDetail</string>
     <string name="fav_button">Mark As \nfavorite</string>
+    <string name="unfav_button">Remove as \nfavorite</string>
+    <string name="favorite">Show Favorites</string>
     <string name="font_medium">sans-serif-medium</string>
     <string name="font_regular">sans-serif</string>
     <string name="font_condensed">sans-serif-condensed</string>
-
+    <string name="reviews">Reviews</string>
+    <string name="reviewed_by">Review by:</string>
     <string name="trailers">Trailers</string>
+    <string name="share_intent_text">Check out the trailer</string>
     <string name="no_network_msg">Please check your internet connection</string>
 </resources>

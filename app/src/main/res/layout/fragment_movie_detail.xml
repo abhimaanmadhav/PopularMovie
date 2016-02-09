@@ -10,8 +10,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
         android:background="@color/colorAccent"
+        android:orientation="vertical"
         >
 
         <TextView
@@ -23,6 +23,7 @@
             android:minHeight="60dp"
             android:padding="16dp"
             android:text="@{moveDetailsObj.originalTitle}"
+            android:textColor="@android:color/white"
             android:textSize="28sp"
             android:textStyle="bold"/>
 
@@ -71,11 +72,13 @@
                     />
 
                 <Button
+                    android:id="@+id/fav"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/button_background"
+                    android:background="@{moveDetailsObj.favorite?@drawable/button_red_background:@drawable/button_background}"
+                    android:onClick="favoriteToggle"
                     android:padding="8dp"
-                    android:text="@string/fav_button"
+                    android:text="@{moveDetailsObj.favorite?@string/unfav_button:@string/fav_button}"
                     android:textColor="@color/grey"/>
 
             </LinearLayout>
@@ -84,7 +87,6 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
             android:fontFamily="@string/font_medium"
             android:padding="16dp"
             android:text="@{moveDetailsObj.overview}"
@@ -94,29 +96,102 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="@android:color/black"
+            android:background="@color/grey"
             android:padding="16dp"
-            android:visibility="gone"/>
+            />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="16dp"
-            android:text="@string/trailers"
-            android:visibility="gone"/>
-
-        <RelativeLayout
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:visibility="gone">
+            android:orientation="horizontal"
+            >
 
-            <android.support.v7.widget.RecyclerView
-                android:layout_width="match_parent"
+            <TextView
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_weight="4"
+                android:fontFamily="@string/font_regular"
+                android:padding="16dp"
+                android:text="@string/trailers"
+                android:textColor="@android:color/black"
+                android:textStyle="bold"
                 />
 
-            <include layout="@layout/progressbar"></include>
-        </RelativeLayout>
+            <View
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:background="@color/grey"/>
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="6"
+                android:fontFamily="@string/font_regular"
+                android:padding="16dp"
+                android:text="@string/reviews"
+                android:textColor="@android:color/black"
+                android:textStyle="bold"
+                />
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/grey"
+            />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:minHeight="240dp"
+            android:orientation="horizontal"
+            >
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="4"
+                >
+
+
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/trailers"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="8dp"
+                    android:paddingLeft="8dp"
+                    android:paddingTop="8dp"
+                    />
+
+                <include layout="@layout/progressbar"></include>
+            </RelativeLayout>
+
+            <View
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:background="@color/grey"
+                />
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="6"
+                >
+
+
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/reviews"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:paddingBottom="8dp"
+                    android:paddingTop="8dp"
+                    />
+
+                <include layout="@layout/progressbar"></include>
+            </RelativeLayout>
+        </LinearLayout>
 
 
     </LinearLayout>

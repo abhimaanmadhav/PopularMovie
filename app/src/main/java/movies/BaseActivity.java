@@ -25,4 +25,5 @@ public class BaseActivity extends AppCompatActivity
 
             return getResources().getBoolean(R.bool.isTablet);
         }
+
 }

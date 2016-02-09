@@ -39,6 +39,7 @@ public class MovieAdapter extends BaseAdapter
     public void clear()
         {
             this.list.clear();
+            currentSelection=-1;
             notifyDataSetChanged();
         }
 
@@ -79,7 +80,7 @@ public class MovieAdapter extends BaseAdapter
                     Picasso.with(mContext).load(list.get
                             (position)
                             .getPosterPath()
-                            .trim()).fit()
+                            .trim()).fit().placeholder(R.drawable.loading).error(R.drawable.error)
                             .into(holder.posterImage);
                 } else
                 {

@@ -1,0 +1,26 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:myapp="http://schemas.android.com/apk/res-auto">
+
+    <!-- "Mark Favorite", should appear as action button if possible -->
+    <item
+        android:id="@+id/action_share"
+        android:icon="@android:drawable/ic_menu_share"
+        android:title="Share"
+        android:visible="@bool/isTablet"
+        myapp:showAsAction="always"/>
+    <item
+        android:id="@+id/action_popular"
+        android:title="@string/sort_popular"
+        myapp:showAsAction="collapseActionView"/>
+
+    <!-- Settings, should always be in the overflow -->
+    <item
+        android:id="@+id/action_ratings"
+        android:title="@string/sort_rating"
+        myapp:showAsAction="never"/>
+
+    <item
+        android:id="@+id/action_favorite"
+        android:title="@string/favorite"
+        myapp:showAsAction="never"/>
+</menu>

@@ -20,6 +20,7 @@ import com.google.gson.GsonBuilder;
 import java.util.ArrayList;
 
 import movies.constants.Constants;
+import movies.database.MovieDataBase;
 import movies.movieDetails.MovieDetailActivity;
 import movies.movieDetails.MovieDetailFragment;
 import retrofit2.Callback;
@@ -42,7 +43,9 @@ public class MovieFragment extends Fragment implements Callback<MovieResponse>, 
     Feedback mFeedback;
     int page = 0;
     boolean requesting = false;
-    String mCurrentConstrain = null;
+    public static final int SORT_FAV = 1, SORT_RATING = 0, SORT_POP = 2, REQUESTCODE = 007;
+    private int mCurrentState = SORT_POP;
+    private final String POP_CONSTRAIN = "popularity.desc", RATING_CONSTRAIN = "vote_average.desc";
     int totalPages = -1;
     int selectedPosition = 1;
     ArrayList<MovieDetailsModel> list;
@@ -62,7 +65,7 @@ public class MovieFragment extends Fragment implements Callback<MovieResponse>, 
             setRetainInstance(true);
             if (Utils.isConnected(getActivity()))
                 {
-                    fetchMoviesWithConstrain("popularity.desc", true);
+                    fetchMoviesWithConstrain();
                 } else
                 {
                     Toast.makeText(getActivity(), getString(R.string.no_network_msg), Toast
@@ -96,12 +99,6 @@ public class MovieFragment extends Fragment implements Callback<MovieResponse>, 
 
         }
 
-    @Override
-    public void onDestroy()
-        {
-            service = null;
-            super.onDestroy();
-        }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle
@@ -163,26 +160,77 @@ public class MovieFragment extends Fragment implements Callback<MovieResponse>, 
             requesting = false;
         }
 
-    void fetchMoviesWithConstrain(String constrain, boolean reset)
+    public void fetchMoviesWithConstrain(int state)
+        {
+            mCurrentState = state;
+            page = 0;
+            totalPages = -1;
+            ((MovieAdapter) mGridView.getAdapter()).clear();
+
+            fetchMoviesWithConstrain();
+        }
+
+    private void fetchMoviesWithConstrain()
         {
 
             if (requesting || (totalPages != -1 && page > totalPages))
                 {
                     return;
                 }
-            if (reset && mGridView != null)
-                {
-                    page = 0;
-                    totalPages = -1;
-                    ((MovieAdapter) mGridView.getAdapter()).clear();
 
-                }
             requesting = true;
             if (Utils.isConnected(getActivity()))
                 {
-                    service.getMovies(Constants.APIKEY, constrain, ++page).enqueue(this);
+                    if (mCurrentState == SORT_POP)
+                        {
+                            service.getMovies(Constants.APIKEY, POP_CONSTRAIN, ++page).enqueue
+                                    (this);
+                        } else
+                        {
+                            service.getMovies(Constants.APIKEY, RATING_CONSTRAIN, ++page).enqueue
+                                    (this);
+                        }
+
                 }
-            mCurrentConstrain = constrain;
+        }
+
+    public void fetchFavorite()
+        {
+            mCurrentState = SORT_FAV;
+            ((MovieAdapter) mGridView.getAdapter()).clear();
+            ((MovieAdapter) mGridView.getAdapter()).notifyDataSetChanged();
+            new Thread(new Runnable()
+            {
+                @Override
+                public void run()
+                    {
+                        list = MovieDataBase.getInstanse(getActivity()).getFavorite();
+                        if (isAdded())
+                            {
+                                getActivity().runOnUiThread(new Runnable()
+                                {
+                                    @Override
+                                    public void run()
+                                        {
+                                            ((MovieAdapter) mGridView.getAdapter()).addData(list);
+                                            if (Utils.isTablet(getActivity()) && mGridView
+                                                    .getAdapter().getCount() > 0)
+                                                {
+                                                    ((MovieAdapter) mGridView.getAdapter())
+                                                            .setSelectedPosition(0);
+                                                    View view = mGridView
+                                                            .getAdapter().getView(0, null,
+                                                                    mGridView);
+
+                                                    mGridView.getOnItemClickListener()
+                                                            .onItemClick(mGridView, view, 0, 0);
+                                                }
+                                        }
+                                });
+
+                            }
+                    }
+            }).start();
         }
 
     @Override
@@ -204,27 +252,35 @@ public class MovieFragment extends Fragment implements Callback<MovieResponse>, 
                     intent.putExtra(MovieDetailFragment.ARG_PARAM1, (MovieDetailsModel) parent
                             .getItemAtPosition
                                     (position));
-                    startActivity(intent);
+                    startActivityForResult(intent, REQUESTCODE);
                 }
         }
 
     @Override
     public void onScrollStateChanged(AbsListView view, int scrollState)
         {
-
+//            if (scrollState == AbsListView.)
         }
 
     @Override
     public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int
             totalItemCount)
         {
+            Logger.debug(this, "scroll");
             if (totalItemCount == 0 || requesting)
                 {
                     return;
                 }
             if (totalItemCount <= view.getFirstVisiblePosition() + visibleItemCount + 4)
                 {
-                    fetchMoviesWithConstrain(mCurrentConstrain, false);
+                    if (mCurrentState == SORT_POP)
+                        {
+                            fetchMoviesWithConstrain();
+                        } else if (mCurrentState == SORT_RATING)
+                        {
+                            fetchMoviesWithConstrain();
+                        }
+
                 } else
                 {
                     Logger.debug(this, "else statemeny");
@@ -249,5 +305,15 @@ public class MovieFragment extends Fragment implements Callback<MovieResponse>, 
             outState.putParcelableArrayList(GRID_DATA, ((MovieAdapter) mGridView.getAdapter())
                     .getData());
             super.onSaveInstanceState(outState);
+        }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data)
+        {
+            if (resultCode == Activity.RESULT_OK && mCurrentState == SORT_FAV)
+                {
+                    fetchFavorite();
+                }
+            super.onActivityResult(requestCode, resultCode, data);
         }
 }

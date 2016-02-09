@@ -2,7 +2,6 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:clickable="false"
     >
 
     <ImageView
@@ -23,6 +22,6 @@
         android:background="@drawable/grid_background"
         android:duplicateParentState="true"
         android:minHeight="250dp"
-        android:visibility="gone"
-        android:scaleType="centerInside"/>
+        android:scaleType="centerInside"
+        android:visibility="gone"/>
 </RelativeLayout>

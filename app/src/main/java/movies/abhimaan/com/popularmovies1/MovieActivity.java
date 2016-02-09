@@ -11,15 +11,13 @@ import movies.movieDetails.MovieDetailFragment;
 import utility.Logger;
 import utility.Utils;
 
-public class MovieActivity extends BaseActivity implements MovieFragment.Feedback
+public class MovieActivity extends BaseActivity implements MovieFragment.Feedback,MovieDetailFragment.MovieDetailTabletInterface
 {
 
-    final String TAG = "MovieActivity";
     final String TAGMOVIEGRID = "moviegrid";
     final String TAGMOVIEDETAIL = "moviedetail";
-    MenuItem popular, rating;
+    MenuItem popular, rating, fav;
     MovieDetailFragment detailFragment;
-
     @Override
     protected void onCreate(Bundle savedInstanceState)
         {
@@ -31,18 +29,21 @@ public class MovieActivity extends BaseActivity implements MovieFragment.Feedbac
             if (fragment == null)
                 {
                     fragment = new MovieFragment();
-                    getFragmentManager().beginTransaction().add(R.id.movie_grid, fragment, TAGMOVIEGRID)
+                    getFragmentManager().beginTransaction().add(R.id.movie_grid, fragment,
+                            TAGMOVIEGRID)
                             .commit();
                 }
 
             if (Utils.isTablet(this))
                 {
-                     detailFragment = (MovieDetailFragment) getFragmentManager().findFragmentByTag
+                    detailFragment = (MovieDetailFragment) getFragmentManager().findFragmentByTag
                             (TAGMOVIEDETAIL);
                     if (detailFragment == null)
                         {
-                            detailFragment = MovieDetailFragment.newInstance(new MovieDetailsModel());
-                            getFragmentManager().beginTransaction().add(R.id.movie_detail, detailFragment,
+                            detailFragment = MovieDetailFragment.newInstance(new
+                                    MovieDetailsModel());
+                            getFragmentManager().beginTransaction().add(R.id.movie_detail,
+                                    detailFragment,
                                     TAGMOVIEDETAIL).commit();
                         }
 
@@ -54,10 +55,12 @@ public class MovieActivity extends BaseActivity implements MovieFragment.Feedbac
     @Override
     public boolean onCreateOptionsMenu(Menu menu)
         {
-            getMenuInflater().inflate(R.menu.fetch_menu, menu);
+            getMenuInflater().inflate(R.menu.movies_menu, menu);
             popular = menu.findItem(R.id.action_popular);
             rating = menu.findItem(R.id.action_ratings);
+            fav = menu.findItem(R.id.action_favorite);
             popular.setChecked(true);
+
             return super.onCreateOptionsMenu(menu);
         }
 
@@ -71,10 +74,14 @@ public class MovieActivity extends BaseActivity implements MovieFragment.Feedbac
                         if (!item.isChecked())
                             {
                                 ((MovieFragment) getFragmentManager().findFragmentByTag
-                                        (TAGMOVIEGRID)).fetchMoviesWithConstrain("popularity" +
-                                        ".desc", true);
+                                        (TAGMOVIEGRID)).fetchMoviesWithConstrain(MovieFragment
+                                        .SORT_POP);
                                 item.setChecked(true);
                                 rating.setChecked(false);
+                                fav.setChecked(false);
+                                if(isTablet()){
+                                 detailFragment.setData(new MovieDetailsModel());
+                                }
                             }
                     }
                     break;
@@ -83,11 +90,31 @@ public class MovieActivity extends BaseActivity implements MovieFragment.Feedbac
                         if (!item.isChecked())
                             {
                                 ((MovieFragment) getFragmentManager().findFragmentByTag
-                                        (TAGMOVIEGRID)).fetchMoviesWithConstrain("vote_average" +
-                                        ".desc", true);
+                                        (TAGMOVIEGRID)).fetchMoviesWithConstrain(MovieFragment
+                                        .SORT_RATING);
                                 item.setChecked(true);
                                 popular.setChecked(false);
+                                fav.setChecked(false);
+                                if(isTablet()){
+                                    detailFragment.setData(new MovieDetailsModel());
+                                }
                             }
+                    }
+                    case R.id.action_favorite:
+                    {
+                        if (!item.isChecked())
+                            {
+                                ((MovieFragment) getFragmentManager().findFragmentByTag
+                                        (TAGMOVIEGRID)).fetchFavorite();
+                                item.setChecked(true);
+                                popular.setChecked(false);
+                                rating.setChecked(false);
+                            }
+                    }
+                    break;
+                    case R.id.action_share:
+                    {
+                        detailFragment.shareUrl();
                     }
                     break;
                 }
@@ -124,5 +151,12 @@ public class MovieActivity extends BaseActivity implements MovieFragment.Feedbac
         {
             Logger.error(this, "move activyt on restore instace");
             super.onRestoreInstanceState(savedInstanceState, persistentState);
+        }
+
+    @Override
+    public void removedAsFavorite(int id)
+        {
+            ((MovieFragment) getFragmentManager().findFragmentByTag
+                    (TAGMOVIEGRID)).fetchFavorite();
         }
 }
